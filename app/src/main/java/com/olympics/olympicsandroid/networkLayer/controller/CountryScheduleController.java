@@ -19,6 +19,7 @@ import com.olympics.olympicsandroid.networkLayer.cache.database.OlympicsPrefs;
 import com.olympics.olympicsandroid.networkLayer.cache.file.DataCacheHelper;
 import com.olympics.olympicsandroid.networkLayer.parse.IParseListener;
 import com.olympics.olympicsandroid.networkLayer.parse.ParseTask;
+import com.olympics.olympicsandroid.utility.DateUtils;
 import com.olympics.olympicsandroid.utility.UtilityMethods;
 
 import java.lang.ref.WeakReference;
@@ -26,8 +27,7 @@ import java.lang.ref.WeakReference;
 /**
  * Created by sarnab.poddar on 7/9/16.
  */
-public class CountryScheduleController
-{
+public class CountryScheduleController {
 
 
     protected WeakReference<IUIListener> listenerWeakReference;
@@ -37,17 +37,19 @@ public class CountryScheduleController
     // after schedule call comes back.
     private CountryProfileEvents countryProfileModel;
 
-    public CountryScheduleController(WeakReference<IUIListener> listenerWeakReference, Context mCtx)
-    {
+    public CountryScheduleController(WeakReference<IUIListener> listenerWeakReference, Context mCtx) {
         this.listenerWeakReference = listenerWeakReference;
         this.mCtx = mCtx;
     }
 
-    public void getCountryDetails()
-    {
+    public void getCountryDetails() {
         listenerWeakReference.get().handleLoadingIndicator(true);
-        DataCacheHelper.getInstance().getDataModel(DataCacheHelper.CACHE_COUNTRY_MODEL,
-                OlympicsPrefs.getInstance(null).getUserSelectedCountry().getAlias(),createNewCacheListener());
+        if (DateUtils.isCurrentDateInOlympics()) {
+            DataCacheHelper.getInstance().getDataModel(DataCacheHelper.CACHE_COUNTRY_MODEL,
+                    OlympicsPrefs.getInstance(null).getUserSelectedCountry().getAlias(), createNewCacheListener());
+        } else {
+            getDataFromServerAndCache();
+        }
 
     }
 
@@ -55,27 +57,26 @@ public class CountryScheduleController
         return new ICacheListener() {
             @Override
             public void datafromCache(IResponseModel responseModel) {
-                if(responseModel == null || !(responseModel instanceof CountryEventUnitModel))
-                {
+                if (responseModel == null || !(responseModel instanceof CountryEventUnitModel)) {
                     getDataFromServerAndCache();
-                }
-                else{
+                } else {
                     listenerWeakReference.get().handleLoadingIndicator(false);
 
-                    CountryEventUnitModel countryEventData = (CountryEventUnitModel)responseModel;
+                    CountryEventUnitModel countryEventData = (CountryEventUnitModel) responseModel;
                     listenerWeakReference.get().onSuccess(countryEventData);
                 }
             }
         };
     }
 
-    private void getDataFromServerAndCache()
-    {
-        if(UtilityMethods.isConnectedToInternet()) {
+    private void getDataFromServerAndCache() {
+        if (UtilityMethods.isConnectedToInternet()) {
             // Set Request Policy
             RequestPolicy requestPolicy = new RequestPolicy();
-            requestPolicy.setForceCache(true);
-            requestPolicy.setMaxAge(60 * 60 * 24);
+            if (DateUtils.isCurrentDateInOlympics()) {
+                requestPolicy.setForceCache(true);
+                requestPolicy.setMaxAge(60 * 60 * 24);
+            }
             requestPolicy.setUrlReplacement(OlympicsPrefs.getInstance(null).getUserSelectedCountry().getId());
 
             if (UtilityMethods.isSimulated) {
@@ -105,7 +106,7 @@ public class CountryScheduleController
                 CustomXMLRequest<CountryProfileEvents> countryRequest = new CustomXMLRequest<CountryProfileEvents>(OlympicRequestQueries.COUNTRY_CONFIG, CountryProfileEvents.class, createCountryProfileSuccessListener(), createCountryProfileFailureListener(), requestPolicy);
                 VolleySingleton.getInstance(null).addToRequestQueue(countryRequest);
             }
-        }else{
+        } else {
             ErrorModel errorModel = new ErrorModel();
             errorModel.setErrorCode(UtilityMethods.ERROR_INTERNET);
             errorModel.setErrorMessage(UtilityMethods.ERROR_INTERNET);
@@ -113,26 +114,24 @@ public class CountryScheduleController
         }
     }
 
-    private void getCompleteSchedule()
-    {
+    private void getCompleteSchedule() {
         // Set Request Policy
         RequestPolicy requestPolicy = new RequestPolicy();
-        requestPolicy.setForceCache(true);
-        requestPolicy.setMaxAge(60 * 60 * 24);
+        if (DateUtils.isCurrentDateInOlympics()) {
+            requestPolicy.setForceCache(true);
+            requestPolicy.setMaxAge(60 * 60 * 24);
+        }
 
-        if(UtilityMethods.isSimulated)
-        {
+        if (UtilityMethods.isSimulated) {
             String configString =
                     UtilityMethods.loadDataFromAsset(mCtx,
                             "schedule.xml");
             ParseTask<OlympicSchedule> parseTask = new ParseTask<OlympicSchedule>(OlympicSchedule.class, configString, new IParseListener() {
                 @Override
-                public void onParseSuccess(Object responseModel)
-                {
-                    if(responseModel != null && responseModel instanceof OlympicSchedule) {
-                        createCountryEventMapping((OlympicSchedule)responseModel);
-                    }
-                    else{
+                public void onParseSuccess(Object responseModel) {
+                    if (responseModel != null && responseModel instanceof OlympicSchedule) {
+                        createCountryEventMapping((OlympicSchedule) responseModel);
+                    } else {
                         listenerWeakReference.get().onFailure(null);
                     }
                 }
@@ -141,15 +140,13 @@ public class CountryScheduleController
                 public void onParseFailure(ErrorModel errorModel) {
                     listenerWeakReference.get().onFailure(errorModel);
                 }
-            },ParseTask.XML_DATA);
+            }, ParseTask.XML_DATA);
             parseTask.startParsing();
-        }
-        else{
-            CustomXMLRequest<OlympicSchedule> countryRequest = new CustomXMLRequest<OlympicSchedule>(OlympicRequestQueries.COMPLETE_SCHEDULE,OlympicSchedule.class,createScheduleSuccessListener(),createScheduleFailureListener(),requestPolicy);
+        } else {
+            CustomXMLRequest<OlympicSchedule> countryRequest = new CustomXMLRequest<OlympicSchedule>(OlympicRequestQueries.COMPLETE_SCHEDULE, OlympicSchedule.class, createScheduleSuccessListener(), createScheduleFailureListener(), requestPolicy);
             VolleySingleton.getInstance(null).addToRequestQueue(countryRequest);
         }
     }
-
 
 
     /*
@@ -160,12 +157,11 @@ public class CountryScheduleController
      * 4) Create UI model of the data
      * 5) Cache all the above data
      */
-    private void createCountryEventMapping(OlympicSchedule olympicScheduleModel)
-    {
+    private void createCountryEventMapping(OlympicSchedule olympicScheduleModel) {
         CountryEventUnitModel countryEventData = new CountryEventsHelper(countryProfileModel,
-            olympicScheduleModel)
-            .createCountryEventUnitModel();
-        DataCacheHelper.getInstance().saveDataModel(DataCacheHelper.CACHE_COUNTRY_MODEL,countryEventData);
+                olympicScheduleModel)
+                .createCountryEventUnitModel();
+        DataCacheHelper.getInstance().saveDataModel(DataCacheHelper.CACHE_COUNTRY_MODEL, countryEventData);
         listenerWeakReference.get().handleLoadingIndicator(false);
 
         listenerWeakReference.get().onSuccess(countryEventData);
@@ -189,11 +185,10 @@ public class CountryScheduleController
         return new Response.Listener<CountryProfileEvents>() {
             @Override
             public void onResponse(CountryProfileEvents responseModel) {
-                if(responseModel != null && responseModel instanceof CountryProfileEvents) {
-                    countryProfileModel = (CountryProfileEvents)responseModel;
+                if (responseModel != null && responseModel instanceof CountryProfileEvents) {
+                    countryProfileModel = (CountryProfileEvents) responseModel;
                     getCompleteSchedule();
-                }
-                else{
+                } else {
                     listenerWeakReference.get().onFailure(null);
                 }
             }
@@ -219,10 +214,9 @@ public class CountryScheduleController
             public void onResponse(OlympicSchedule responseModel) {
                 listenerWeakReference.get().handleLoadingIndicator(false);
 
-                if(responseModel != null && responseModel instanceof OlympicSchedule) {
-                    createCountryEventMapping((OlympicSchedule)responseModel);
-                }
-                else{
+                if (responseModel != null && responseModel instanceof OlympicSchedule) {
+                    createCountryEventMapping((OlympicSchedule) responseModel);
+                } else {
 
                     listenerWeakReference.get().onFailure(null);
                 }

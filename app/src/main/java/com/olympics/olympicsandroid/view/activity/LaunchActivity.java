@@ -13,6 +13,7 @@ import android.text.TextUtils;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.olympics.olympicsandroid.OlympicsApplication;
 import com.olympics.olympicsandroid.R;
 import com.olympics.olympicsandroid.model.AppVersionData;
 import com.olympics.olympicsandroid.model.ErrorModel;
@@ -21,6 +22,7 @@ import com.olympics.olympicsandroid.networkLayer.OlympicRequestQueries;
 import com.olympics.olympicsandroid.networkLayer.RequestPolicy;
 import com.olympics.olympicsandroid.networkLayer.VolleySingleton;
 import com.olympics.olympicsandroid.networkLayer.cache.database.OlympicsPrefs;
+import com.olympics.olympicsandroid.utility.DateUtils;
 import com.olympics.olympicsandroid.view.activity.factory.ActivityFactory;
 
 /**
@@ -50,8 +52,6 @@ public class LaunchActivity extends Activity {
     private void checkAppVersion() {
 
         RequestPolicy requestPolicy = new RequestPolicy();
-        requestPolicy.setForceCache(true);
-        requestPolicy.setMaxAge(60 * 60 * 24);
 
         CustomJSONRequest<AppVersionData> appVersionRequest = new
                 CustomJSONRequest<AppVersionData>(OlympicRequestQueries.APP_VERSION_DATA,
@@ -83,6 +83,13 @@ public class LaunchActivity extends Activity {
                         //Set APIKey and BaseURL from the configuration file
                         OlympicsPrefs.getInstance(null).setAPIKey(appVersionData.getApiKey());
                         OlympicsPrefs.getInstance(null).setBaseURL(appVersionData.getBaseURL());
+                        if(!TextUtils.isEmpty(appVersionData.getCacheConfigDate())) {
+                            OlympicsApplication.getAppInstance().setCacheStartDate(Long.parseLong(appVersionData.getCacheConfigDate()));
+                        }
+                        else{
+                            OlympicsApplication.getAppInstance().setCacheStartDate(DateUtils.OLYMPIC_EVENT_START_DATE);
+
+                        }
                     }
                 }
             }

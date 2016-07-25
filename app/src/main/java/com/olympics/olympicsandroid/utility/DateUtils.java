@@ -2,6 +2,8 @@ package com.olympics.olympicsandroid.utility;
 
 import android.text.TextUtils;
 
+import com.olympics.olympicsandroid.OlympicsApplication;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -16,7 +18,7 @@ import java.util.TimeZone;
 public class DateUtils {
 
     public static final String DATE_TIME_WITH_TIMEZONE_FORMAT = "yyyy-MM-dd'T'HH:mm:ssZZZZZ";
-    public static final String DATE_TIME_WITHOUT_TIMEZONE_FORMAT = "yyyy-MMM-dd HH:mm:ss";
+    public static final String DATE_TIME_WITHOUT_TIMEZONE_FORMAT = "MMM-dd'    Time - 'HH:mm";
     public static final String DATE_TIME_WITHOUT_DATE_TIMEZONE_FORMAT = "HH:mm";
 
     public static final String DATE_FORMAT = "yyyy-MM-dd";
@@ -54,7 +56,7 @@ public class DateUtils {
 
     public static boolean isCurrentDateInOlympics()
     {
-        if(System.currentTimeMillis() < OLYMPIC_EVENT_START_DATE)
+        if(System.currentTimeMillis() < OlympicsApplication.getAppInstance().getCacheStartDate())
         {
             return false;
         }

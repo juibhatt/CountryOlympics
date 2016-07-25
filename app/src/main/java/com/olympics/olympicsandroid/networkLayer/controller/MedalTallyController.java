@@ -40,9 +40,11 @@ public class MedalTallyController
 
     public synchronized void  getMedalTallyData()
     {
-        //Retrieving medal tally data from server and cache
-        DataCacheHelper.getInstance().getDataModel(DataCacheHelper.CACHE_MEDALTALLY_MODEL,
-                DataCacheHelper.CACHE_MEDALTALLY_KEY, createNewCacheListener());
+//        if(DateUtils.isCurrentDateInOlympics()) {
+//            //Retrieving medal tally data from server and cache
+////            DataCacheHelper.getInstance().getDataModel(DataCacheHelper.CACHE_MEDALTALLY_MODEL,
+////                    DataCacheHelper.CACHE_MEDALTALLY_KEY, createNewCacheListener());
+//        }
         getLatestMedalDataFromServer();
     }
 

@@ -15,6 +15,7 @@ import com.olympics.olympicsandroid.networkLayer.cache.ICacheListener;
 import com.olympics.olympicsandroid.networkLayer.cache.file.DataCacheHelper;
 import com.olympics.olympicsandroid.networkLayer.parse.IParseListener;
 import com.olympics.olympicsandroid.networkLayer.parse.ParseTask;
+import com.olympics.olympicsandroid.utility.DateUtils;
 import com.olympics.olympicsandroid.utility.UtilityMethods;
 
 import java.lang.ref.WeakReference;
@@ -23,24 +24,25 @@ import java.lang.ref.WeakReference;
  * Created by sarnab.poddar on 7/8/16.
  */
 
-public class CountryListController
-{
+public class CountryListController {
 
 
     protected WeakReference<IUIListener> listenerWeakReference;
     protected Context mCtx;
 
-    public CountryListController(WeakReference<IUIListener> listenerWeakReference, Context mCtx)
-    {
+    public CountryListController(WeakReference<IUIListener> listenerWeakReference, Context mCtx) {
         this.listenerWeakReference = listenerWeakReference;
         this.mCtx = mCtx;
     }
 
 
-    public synchronized void  getCountryData()
-    {
-        DataCacheHelper.getInstance().getDataModel(DataCacheHelper.CACHE_COUNTRYSELECTION_MODEL,
-                DataCacheHelper.COUNTRY_SELECTION_KEY, createNewCacheListener());
+    public synchronized void getCountryData() {
+        if (DateUtils.isCurrentDateInOlympics()) {
+            DataCacheHelper.getInstance().getDataModel(DataCacheHelper.CACHE_COUNTRYSELECTION_MODEL,
+                    DataCacheHelper.COUNTRY_SELECTION_KEY, createNewCacheListener());
+        } else {
+            getDataFromServer();
+        }
 
     }
 
@@ -48,25 +50,23 @@ public class CountryListController
         return new ICacheListener() {
             @Override
             public void datafromCache(IResponseModel responseModel) {
-                if(responseModel != null)
-                {
+                if (responseModel != null) {
                     listenerWeakReference.get().onSuccess(responseModel);
-                }
-                else{
+                } else {
                     getDataFromServer();
                 }
             }
         };
     }
 
-    private void getDataFromServer()
-    {
-        if(UtilityMethods.isConnectedToInternet()) {
+    private void getDataFromServer() {
+        if (UtilityMethods.isConnectedToInternet()) {
             // Set Request Policy
             RequestPolicy requestPolicy = new RequestPolicy();
-            requestPolicy.setForceCache(true);
-            requestPolicy.setMaxAge(60 * 60 * 24);
-
+            if (DateUtils.isCurrentDateInOlympics()) {
+                requestPolicy.setForceCache(true);
+                requestPolicy.setMaxAge(60 * 60 * 24);
+            }
             if (UtilityMethods.isSimulated) {
                 String configString =
                         UtilityMethods.loadDataFromAsset(mCtx,
@@ -88,8 +88,7 @@ public class CountryListController
                         createSuccessListener(), createFailureListener(), requestPolicy);
                 VolleySingleton.getInstance(null).addToRequestQueue(countryRequest);
             }
-        }
-        else{
+        } else {
             ErrorModel errorModel = new ErrorModel();
             errorModel.setErrorCode(UtilityMethods.ERROR_INTERNET);
             errorModel.setErrorMessage(UtilityMethods.ERROR_INTERNET);
@@ -113,7 +112,7 @@ public class CountryListController
         return new Response.Listener<CountryModel>() {
             @Override
             public void onResponse(CountryModel response) {
-                DataCacheHelper.getInstance().saveDataModel(DataCacheHelper.CACHE_COUNTRYSELECTION_MODEL,response);
+                DataCacheHelper.getInstance().saveDataModel(DataCacheHelper.CACHE_COUNTRYSELECTION_MODEL, response);
                 listenerWeakReference.get().onSuccess(response);
             }
         };

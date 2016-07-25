@@ -16,6 +16,7 @@ public class OlympicsApplication extends Application
     OlympicsPrefs olympicsPrefs;
     VolleySingleton volleySingleton;
     private static OlympicsApplication instance;
+    private long cacheStartDate;
 
     private SportsUtility sportsUtility;
 
@@ -34,5 +35,16 @@ public class OlympicsApplication extends Application
         return instance.getApplicationContext();
     }
 
+    public static OlympicsApplication getAppInstance()
+    {
+        return instance;
+    }
 
+    public long getCacheStartDate() {
+        return cacheStartDate;
+    }
+
+    public void setCacheStartDate(long cacheStartDate) {
+        this.cacheStartDate = cacheStartDate;
+    }
 }
