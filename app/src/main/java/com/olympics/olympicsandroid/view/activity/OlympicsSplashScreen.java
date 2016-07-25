@@ -30,7 +30,7 @@ public class OlympicsSplashScreen extends Activity {
                 finish();
             }
         };
-
+        createApplicationShortcut();
     }
 
     @Override
@@ -64,6 +64,20 @@ public class OlympicsSplashScreen extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+    }
+
+    private void createApplicationShortcut() {
+
+        Intent HomeScreenShortCut = new Intent(getApplicationContext(), OlympicsSplashScreen.class);
+        HomeScreenShortCut.setAction(Intent.ACTION_MAIN);
+        HomeScreenShortCut.putExtra("duplicate", false);
+        //shortcutIntent is added with addIntent
+        Intent addIntent = new Intent();
+        addIntent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, HomeScreenShortCut);
+        addIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, getString(getApplicationInfo().labelRes));
+        addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, Intent.ShortcutIconResource.fromContext(getApplicationContext(), R.drawable.app_icon));
+        addIntent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
+        getApplicationContext().sendBroadcast(addIntent);
     }
 }
 
