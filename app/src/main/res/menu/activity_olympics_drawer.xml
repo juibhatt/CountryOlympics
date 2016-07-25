@@ -15,12 +15,8 @@
             android:icon="@drawable/player"
             android:title="Players" />
         <item
-            android:id="@+id/nav_atter"
-            android:icon="@drawable/atter"
-            android:title="Attributions" />
-        <item
-            android:id="@+id/nav_about"
+            android:id="@+id/nav_info"
             android:icon="@drawable/about"
-            android:title="About us" />
+            android:title="Info" />
     </group>
 </menu>

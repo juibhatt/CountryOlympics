@@ -25,4 +25,13 @@
     <string name="medaltally_update_timestamp">Last Updated : %1$s</string>
     <string name="id_error_server">We had a problem retrieving information. Do you want to try again?</string>
     <string name="id_error_internet">No network connection, please try again.</string>
+
+
+    <!--App Info String -->
+    <string name="title_activity_app_info">Info</string>
+    <string name="contact_us_string">Contact us</string>
+    <string name="rate_app_string">Rate Olympics 2016</string>
+    <string name="share_app_string">Share Olympics 2016</string>
+    <string name="sportradar_info">Data by Sportradar US\n\nv1.0(10)</string>
+
 </resources>

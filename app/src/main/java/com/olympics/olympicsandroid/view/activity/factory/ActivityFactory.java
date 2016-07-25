@@ -8,6 +8,7 @@ import android.os.Bundle;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.olympics.olympicsandroid.OlympicsApplication;
 import com.olympics.olympicsandroid.networkLayer.cache.database.OlympicsPrefs;
+import com.olympics.olympicsandroid.view.activity.AppInfoActivity;
 import com.olympics.olympicsandroid.view.activity.AthleteActivity;
 import com.olympics.olympicsandroid.view.activity.CountrySelectionActivity;
 import com.olympics.olympicsandroid.view.activity.MedalTallyActivity;
@@ -84,5 +85,11 @@ public class ActivityFactory
 
         ctx.startActivity(intentExtra);
     }
+
+    public static void openAppInfoActivity(Activity originCTX)
+    {
+        originCTX.startActivity(new Intent(originCTX, AppInfoActivity.class));
+    }
+
 
 }

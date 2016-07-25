@@ -1,0 +1,99 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/headerBkg"
+            android:fillViewport="true"
+                tools:context="com.olympics.olympicsandroid.view.activity.AppInfoActivity">
+
+    <RelativeLayout
+        android:id="@+id/base_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/app_logo"
+        android:layout_width="wrap_content"
+        android:layout_height="250dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginBottom="40dp"
+        android:src="@drawable/infologo"/>
+
+    <RelativeLayout
+        android:id="@+id/appinfo_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/app_logo"
+        android:background="@android:color/white">
+
+        <TextView
+            android:id="@+id/contact_us_view"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:clickable="true"
+            android:drawablePadding="10dp"
+            android:drawableLeft="@drawable/contactus"
+            android:paddingLeft="10dp"
+            android:gravity="center_vertical"
+            android:text="@string/contact_us_string"
+            android:textSize="18sp"/>
+
+        <View
+            android:id="@+id/contact_us_divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@id/contact_us_view"
+            android:background="@android:color/darker_gray"/>
+
+        <TextView
+            android:id="@+id/rate_app_view"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_below="@id/contact_us_divider"
+            android:clickable="true"
+            android:drawableLeft="@drawable/rateus"
+            android:drawablePadding="10dp"
+            android:paddingLeft="10dp"
+            android:gravity="center_vertical"
+            android:text="@string/rate_app_string"
+            android:textSize="18sp"/>
+
+        <View
+            android:id="@+id/rate_app_divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@id/rate_app_view"
+            android:background="@android:color/darker_gray"/>
+
+        <TextView
+            android:id="@+id/share_app_view"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_below="@id/rate_app_divider"
+            android:gravity="center_vertical"
+            android:clickable="true"
+            android:drawableLeft="@drawable/share"
+            android:drawablePadding="10dp"
+            android:paddingLeft="10dp"
+            android:text="@string/share_app_string"
+            android:textSize="18sp"/>
+
+        <View
+            android:id="@+id/share_app_divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@id/share_app_view"
+            android:background="@android:color/darker_gray"/>
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="bottom|center_horizontal"
+        android:textSize="18sp"
+        android:textColor="@android:color/darker_gray"
+        android:layout_below="@id/appinfo_layout"
+        android:layout_centerHorizontal="true"
+        android:text="@string/sportradar_info"/>
+</RelativeLayout>
+</ScrollView>

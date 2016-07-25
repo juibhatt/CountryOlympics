@@ -164,14 +164,17 @@ public class OlympicsActivity extends AppCompatActivity implements NavigationVie
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.nav_events) {
-
-        } else if (id == R.id.nav_medal) {
-            ActivityFactory.openMedalActivity(this, null);
-        } else if (id == R.id.nav_athletes) {
-            ActivityFactory.openAthleteActivity(this,null);
+        switch(id) {
+            case R.id.nav_medal:
+                ActivityFactory.openMedalActivity(this, null);
+                break;
+            case R.id.nav_athletes:
+                ActivityFactory.openAthleteActivity(this, null);
+                break;
+            case R.id.nav_info:
+                ActivityFactory.openAppInfoActivity(this);
+                break;
         }
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
