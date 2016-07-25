@@ -3,6 +3,7 @@ package com.olympics.olympicsandroid.networkLayer;
 import android.text.TextUtils;
 
 import com.android.volley.Request;
+import com.olympics.olympicsandroid.networkLayer.cache.database.OlympicsPrefs;
 
 /**
  * Created by sarnab.poddar on 7/9/16.
@@ -26,6 +27,7 @@ public enum OlympicRequestQueries
     private boolean isCacheable;
     private boolean needAPIKey;
 
+    private String apiKey = "5hkjft4mvnbzc26875u6c2zv";
     private String baseURL = "https://api.sportradar.us/oly-testing2";
 
     OlympicRequestQueries(int httpRequestType, String relativeURL , boolean isCacheable, boolean needAPIKey)
@@ -34,6 +36,15 @@ public enum OlympicRequestQueries
         this.relativeURL = relativeURL;
         this.isCacheable = isCacheable;
         this.needAPIKey = needAPIKey;
+
+        //Setup baseURL
+        String urlStr = OlympicsPrefs.getInstance(null).getBaseURL();
+        this.baseURL = TextUtils.isEmpty(urlStr) ? baseURL : urlStr;
+
+        //Setup API Key
+        String apiKeyFromServer = OlympicsPrefs.getInstance(null).getAPIKey();
+        this.apiKey = TextUtils.isEmpty(apiKeyFromServer) ? apiKey : apiKeyFromServer;
+
     }
 
     OlympicRequestQueries(int httpRequestType, String baseURL, String relativeURL , boolean
@@ -60,7 +71,7 @@ public enum OlympicRequestQueries
         if(needAPIKey)
         {
             finalRequestString.append("?");
-            finalRequestString.append("api_key=5hkjft4mvnbzc26875u6c2zv");
+            finalRequestString.append("api_key=" + apiKey);
         }
 
         return finalRequestString.toString();

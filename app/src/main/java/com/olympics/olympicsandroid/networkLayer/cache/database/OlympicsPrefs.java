@@ -18,6 +18,9 @@ public class OlympicsPrefs
 
     private final String USER_SET_COUNTRY = "USER_SET_COUNTRY";
     private final String MEDALTALLY_UPDATE_TIMESTAMP = "MEDAL_TIMESTAMP";
+    private final String PREF_BASE_URL = "BASEURL";
+    private final String PREF_API_KEY = "APIKEY";
+
 
     private static OlympicsPrefs instance;
 
@@ -72,6 +75,28 @@ public class OlympicsPrefs
 
     public String getMedalTallyRefreshTime() {
         return getDefaultSharePreference().getString(MEDALTALLY_UPDATE_TIMESTAMP, null);
+    }
+
+    public void setBaseURL(String baseURL)
+    {
+        SharedPreferences.Editor editor = getDefaultSharePreference().edit();
+        editor.putString(PREF_BASE_URL, baseURL);
+        editor.apply();
+    }
+
+    public String getBaseURL() {
+        return getDefaultSharePreference().getString(PREF_BASE_URL, null);
+    }
+
+    public void setAPIKey(String timestamp)
+    {
+        SharedPreferences.Editor editor = getDefaultSharePreference().edit();
+        editor.putString(PREF_API_KEY, timestamp);
+        editor.apply();
+    }
+
+    public String getAPIKey() {
+        return getDefaultSharePreference().getString(PREF_API_KEY, null);
     }
 
 }
